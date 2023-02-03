@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<a href="mailto:sevdenurgudul@gmail.com?subject=HTML link">Sevdenur Güdül e-posta adresi</a>
+<a href="mailto:n.apaydinnnn@gmail.com?subject=HTML link">Nimet Apaydın e-posta adresi</a>
+<head>
+    <meta charset="utf-8" />
+    <title>Design Project </title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <a href="#">Seçilen Kelimeler :</a>
+            </div>
+            <ul>
+                <li><a href="#">ERÜ</a></li>
+                <li><a href="#">Staj</a></li>
+                <li><a href="#">ders</a></li>
+            </ul>
+        </div>
+        <div class="center">
+            <h1>Seçilen Web Sitesinde Güncellik Kontrolü</h1>
+            <h2>Kelimeler kontrol ediliyor:https://bm.erciyes.edu.tr/?Anasayfa </h2>
+            <div class="buttons">
+                <button>KONTROL ETMEK İÇİN TIKLAYINIZ:</button>
+            </div>
+            <h3>Kontrol edilme sıklığı 10 saniyedir </h3>
+            <br />
+            <label id="status"></label>
+        </div>
+    </div>
+
+    <script>
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://bm.erciyes.edu.tr/?Anasayfa");
+        xhr.send();
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                const oldWebsiteData = xhr.responseText;
+                const statusLabel = document.getElementById("status");
+
+                setInterval(function () {
+                    const newXhr = new XMLHttpRequest();
+                    newXhr.open("GET", "https://bm.erciyes.edu.tr/?Anasayfa");
+                    newXhr.send();
+
+                    newXhr.onreadystatechange = function () {
+                        if (newXhr.readyState === XMLHttpRequest.DONE) {
+                            const newWebsiteData = newXhr.responseText;
+                            let websiteChanged = false;
+
+                            if (oldWebsiteData !== newWebsiteData) {
+                                websiteChanged = true;
+                                oldWebsiteData = newWebsiteData;
+                            }
+
+                            const wordsToCheck = ["ERÜ", "Staj", "ders"];
+                            let wordsFound = false;
+
+                            for (const word of wordsToCheck) {
+                                if (newWebsiteData.indexOf(word) !== -1) {
+                                    wordsFound = true;
+                                    break;
+                                }
+                            }
+                            statusLabel.innerHTML = ""
+                            if (websiteChanged) {
+                                statusLabel.innerHTML = "Web Sayfası değişmiş!";
+                            }
+
+                            if (wordsFound) {
+                                statusLabel.innerHTML += " Aranan kelimelerden en az birisi web sayfasında bulundu.";
+                            } else {
+                                statusLabel.innerHTML += " Web sayfasında aranan kelimeler bulunamadı.";
+                            }
+                        }
+                    };
+                }, 10000); // checks the website every 10 seconds
+            }
+        };
+    </script>
+
+</body>
+</html>
